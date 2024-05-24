@@ -92,7 +92,7 @@ class LivePreviewWidget extends WidgetType {
 
 	eq(other: LivePreviewWidget) {
 		//return false if the regex is edited
-		const regex = new RegExp(removeTags(this.data.regex), this.data.flags || "");
+		const regex = new RegExp(removeTags(this.data.regex));
 		if (this.value.match(regex) === null)
 			return false;
 

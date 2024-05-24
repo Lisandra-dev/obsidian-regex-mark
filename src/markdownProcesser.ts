@@ -25,37 +25,28 @@ export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 			textNodes.push(treeWalker.currentNode);
 		}
 		for (const node of textNodes) {
-			const text = node.textContent;
-			const items: { classes: string, data: string, text: string }[] = [];
+			let text = node.textContent;
 			if (text) {
 				for (const d of data) {
-					if (!d.regex || !d.class || d.regex === "" || d.class === "")
-						continue;
+					if (!d.regex || !d.class || d.regex === "" || d.class === "") continue;
 					const regex = new RegExp(removeTags(d.regex));
-					if (!d.hide){
-						items.push({ classes: d.class, data: text, text});
-					}
-					else {
+					if (d.hide) {
 						const group = removeTags(d.regex).match(/\((.*?)\)/);
 						const dataText = regex.exec(text);
-						if (!group || !dataText || !dataText?.[1])
-							continue;
-						items.push({ classes: d.class, data: dataText[1], text: text.replace(dataText[0], "")});
+						if (!group || !dataText || !dataText?.[1]) continue;
+						text = text.replace(regex, `<span class="${d.class}" data-contents="$1">$1</span>`);
 					}
+					else text = text.replace(regex, `<span class="${d.class}" data-contents="$&">$&</span>`);
 				}
+				const dom = new DOMParser().parseFromString(text, "text/html");
 				const span = document.createElement("span");
-				//expected result:
-				//text = "y^x"
-				//y<span class="super">x</span>
-				for (const item of items) {
-					span.setText(item.text);
-					const spanInner = document.createElement("span");
-					spanInner.className = item.classes;
-					spanInner.setText(item.data);
-					span.appendChild(spanInner);
+				//don't use innerHTML because it is not safe
+				while (dom.body.hasChildNodes()) {
+					span.appendChild(dom.body.firstChild as Node);
 				}
-				if (node.parentNode)
+				if (node.parentNode) {
 					node.parentNode.replaceChild(span, node);
+				}
 			}
 		}
 	}
