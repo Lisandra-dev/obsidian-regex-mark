@@ -26,28 +26,33 @@ export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 		}
 		for (const node of textNodes) {
 			const text = node.textContent;
-			const items: { classes: string, data: string }[] = [];
+			const items: { classes: string, data: string, text: string }[] = [];
 			if (text) {
 				for (const d of data) {
 					if (!d.regex || !d.class || d.regex === "" || d.class === "")
 						continue;
 					const regex = new RegExp(removeTags(d.regex));
 					if (!d.hide){
-						items.push({ classes: d.class, data: text });
+						items.push({ classes: d.class, data: text, text});
 					}
 					else {
 						const group = removeTags(d.regex).match(/\((.*?)\)/);
-						if (!group)
+						const dataText = regex.exec(text);
+						if (!group || !dataText || !dataText?.[1])
 							continue;
-						items.push({ classes: d.class, data: text.replace(regex, "$1")});
+						items.push({ classes: d.class, data: dataText[1], text: text.replace(dataText[0], "")});
 					}
 				}
 				const span = document.createElement("span");
-				console.log(items);
+				//expected result:
+				//text = "y^x"
+				//y<span class="super">x</span>
 				for (const item of items) {
-					span.innerText = item.data;
-					span.addClass(item.classes);
-					span.setAttribute("data-contents", item.data);
+					span.setText(item.text);
+					const spanInner = document.createElement("span");
+					spanInner.className = item.classes;
+					spanInner.setText(item.data);
+					span.appendChild(spanInner);
 				}
 				if (node.parentNode)
 					node.parentNode.replaceChild(span, node);
