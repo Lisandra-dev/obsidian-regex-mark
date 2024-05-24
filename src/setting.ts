@@ -1,6 +1,6 @@
-import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { type App, Notice, PluginSettingTab, Setting } from "obsidian";
 
-import RegexMark from "./main";
+import type RegexMark from "./main";
 import { hasToHide, isValidRegex } from "./utils";
 
 
@@ -214,7 +214,7 @@ export class RemarkRegexSettingTab extends PluginSettingTab {
 			new RegExp(regex);
 			if (cb) cb.removeClass("is-invalid");
 			return true;
-		} catch (e) {
+		} catch (_e) {
 			console.warn("Invalid regex", regex);
 			if (cb) cb.addClass("is-invalid");
 			return false;
