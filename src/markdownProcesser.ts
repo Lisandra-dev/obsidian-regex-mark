@@ -1,5 +1,6 @@
 import { SettingOption } from "./setting";
 import { isValidRegex, removeTags } from "./utils";
+import {sanitize} from "dompurify";
 
 export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 	const paragraph = element.findAll("p, li, h1, h2, h3, h4, h5, h6, td, .callout-title-inner");
@@ -38,7 +39,7 @@ export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 					}
 					else text = text.replace(regex, `<span class="${d.class}" data-contents="$&">$&</span>`);
 				}
-				const dom = new DOMParser().parseFromString(text, "text/html");
+				const dom = new DOMParser().parseFromString(sanitize(text), "text/html");
 				const span = document.createElement("span");
 				//don't use innerHTML because it is not safe
 				while (dom.body.hasChildNodes()) {
