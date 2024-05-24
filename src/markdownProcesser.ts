@@ -10,7 +10,7 @@ export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 		for (const d of data) {
 			if (!d.regex || !d.class || d.regex === "" || d.class === "" || !isValidRegex(d.regex))
 				continue;
-			const regex = new RegExp(removeTags(d.regex), "g");
+			const regex = new RegExp(removeTags(d.regex));
 			if (regex.test(p.textContent || "")) {
 				ignore = false;
 				break;
@@ -25,24 +25,29 @@ export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 			textNodes.push(treeWalker.currentNode);
 		}
 		for (const node of textNodes) {
-			let text = node.textContent;
+			const text = node.textContent;
+			const items: { classes: string, data: string }[] = [];
 			if (text) {
 				for (const d of data) {
 					if (!d.regex || !d.class || d.regex === "" || d.class === "")
 						continue;
-					const regex = new RegExp(removeTags(d.regex), "g");
-					if (!d.hide)
-						text = text.replace(regex, `<span class="${d.class}" data-contents="$&">$&</span>`);
+					const regex = new RegExp(removeTags(d.regex));
+					if (!d.hide){
+						items.push({ classes: d.class, data: text });
+					}
 					else {
 						const group = removeTags(d.regex).match(/\((.*?)\)/);
 						if (!group)
-							continue;
-						text = text.replace(regex, `<span class="${d.class}" data-contents="$1">$1</span>`);
-
+							continue;						
+						items.push({ classes: d.class, data: text.replace(regex, "$1")});
 					}
 				}
 				const span = document.createElement("span");
-				span.innerHTML = text;
+				for (const item of items) {
+					span.innerText = item.data;
+					span.addClass(item.classes);
+					span.setAttribute("data-contents", item.data);
+				}
 				if (node.parentNode)
 					node.parentNode.replaceChild(span, node);
 			}

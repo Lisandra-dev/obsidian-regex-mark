@@ -6,7 +6,7 @@
 }
 
 .line:not(:has(.title)) {
-  border-top: 1px solid var(--background-modifier-border)
+  border-top: 1px solid var(--background-modifier-border);
 }
 
 .title {
@@ -30,14 +30,13 @@
   width: 10em;
 }
 
-
 .h2 {
   font-size: 1.8em;
   font-weight: bold;
   margin: 0.5em 0;
 }
 
-.secondary {
+.regex-setting-secondary {
   font-size: 0.8em;
   color: #666;
 }
@@ -54,6 +53,10 @@
   display: none;
 }
 
+.regex-setting input.min-width {
+  min-width: 7ch;
+}
+
 .regex-setting input.extra-width {
   width: 100%;
 }
@@ -65,4 +68,8 @@
 .regex-setting .is-disabled-manually {
   pointer-events: none;
   opacity: 0.5;
+}
+
+.regex-setting-bold {
+  font-weight: bold;
 }
