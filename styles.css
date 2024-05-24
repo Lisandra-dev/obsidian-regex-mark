@@ -73,8 +73,3 @@
 .regex-setting-bold {
   font-weight: bold;
 }
-
-.sup-text {
-  vertical-align: super;
-  font-size: 90%;
-}
