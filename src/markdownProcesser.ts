@@ -38,11 +38,12 @@ export function MarkdownProcesser(data: SettingOption[], element: HTMLElement) {
 					else {
 						const group = removeTags(d.regex).match(/\((.*?)\)/);
 						if (!group)
-							continue;						
+							continue;
 						items.push({ classes: d.class, data: text.replace(regex, "$1")});
 					}
 				}
 				const span = document.createElement("span");
+				console.log(items);
 				for (const item of items) {
 					span.innerText = item.data;
 					span.addClass(item.classes);
